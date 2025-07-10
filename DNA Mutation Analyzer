@@ -41,31 +41,36 @@ def visualize(mutations, length):
     ax.set_yticks([])
     return fig
 
-# --- Streamlit UI 구성 ---
+# 페이지 설정
 st.set_page_config(layout="wide")
 st.markdown("<h1 style='color:#497325;'>DNA Mutation Analyzer</h1>", unsafe_allow_html=True)
 
-# 입력 & 출력 칼럼
+# 세션 초기화
+if "run_analysis" not in st.session_state:
+    st.session_state.run_analysis = False
+
+# 입력
 col1, col2 = st.columns(2)
 
 with col1:
     st.markdown("<h3 style='color:#497325;'>Input Sequences</h3>", unsafe_allow_html=True)
-    ref = st.text_area("Reference Sequence (ref)", height=150)
-    seq = st.text_area("Mutated Sequence (seq)", height=150)
+    ref = st.text_area("Reference Sequence (ref)", key="ref", height=150)
+    seq = st.text_area("Mutated Sequence (seq)", key="seq", height=150)
 
-    analyze_clicked = st.button("🔍 Analyze")
+    if st.button("🔍 Analyze"):
+        if ref and seq:
+            st.session_state.run_analysis = True
+        else:
+            st.warning("두 시퀀스를 모두 입력해주세요!")
 
 with col2:
     st.markdown("<h3 style='color:#497325;'>Results</h3>", unsafe_allow_html=True)
 
-    if analyze_clicked:
-        if not ref or not seq:
-            st.warning("두 시퀀스를 모두 입력해주세요!")
-        else:
-            mutations = compare(ref, seq)
-            results = summarize(mutations, len(ref))
-            for line in results:
-                st.text(line)
-            fig = visualize(mutations, len(ref))
-            if fig:
-                st.pyplot(fig)
+    if st.session_state.run_analysis:
+        mutations = compare(ref, seq)
+        results = summarize(mutations, len(ref))
+        for line in results:
+            st.text(line)
+        fig = visualize(mutations, len(ref))
+        if fig:
+            st.pyplot(fig)
