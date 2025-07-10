@@ -50,22 +50,22 @@ col1, col2 = st.columns(2)
 
 with col1:
     st.markdown("<h3 style='color:#497325;'>Input Sequences</h3>", unsafe_allow_html=True)
-    ref = st.text_area("Reference Sequence (ref)", height=150, key="ref")
-    seq = st.text_area("Mutated Sequence (seq)", height=150, key="seq")
+    ref = st.text_area("Reference Sequence (ref)", height=150)
+    seq = st.text_area("Mutated Sequence (seq)", height=150)
 
-    if st.button("Analyze"):
-        if ref and seq:
-            st.session_state.mutations = compare(ref, seq)
-            st.session_state.results = summarize(st.session_state.mutations, len(ref))
-        else:
-            st.warning("두 개의 시퀀스를 모두 입력해주세요!")
+    analyze_clicked = st.button("🔍 Analyze")
 
 with col2:
     st.markdown("<h3 style='color:#497325;'>Results</h3>", unsafe_allow_html=True)
 
-    if "results" in st.session_state:
-        for line in st.session_state.results:
-            st.text(line)
-        fig = visualize(st.session_state.mutations, len(ref))
-        if fig:
-            st.pyplot(fig)
+    if analyze_clicked:
+        if not ref or not seq:
+            st.warning("두 시퀀스를 모두 입력해주세요!")
+        else:
+            mutations = compare(ref, seq)
+            results = summarize(mutations, len(ref))
+            for line in results:
+                st.text(line)
+            fig = visualize(mutations, len(ref))
+            if fig:
+                st.pyplot(fig)
