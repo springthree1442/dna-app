@@ -41,25 +41,24 @@ def visualize(mutations, length):
     ax.set_yticks([])
     return fig
 
-# 페이지 설정
+# Streamlit UI
 st.set_page_config(layout="wide")
-st.markdown("<h1 style='color:#497325;'>DNA Mutation Analyzer</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='color:#497325;'>🧬 DNA Mutation Analyzer</h1>", unsafe_allow_html=True)
 
-# 입력 영역
-ref = st.text_area("🔬 Reference Sequence (ref)", key="ref", height=100)
-seq = st.text_area("🧬 Mutated Sequence (seq)", key="seq", height=100)
+# 사용자 입력
+ref = st.text_area("🔬 Reference Sequence", height=100)
+seq = st.text_area("🧬 Mutated Sequence", height=100)
 
-# 분석 버튼
+# 버튼 클릭 시 분석 결과 저장
 if st.button("🟢 Analyze"):
     if ref and seq:
-        mutations = compare(ref, seq)
-        st.session_state["mutations"] = mutations
+        st.session_state["mutations"] = compare(ref, seq)
         st.session_state["length"] = len(ref)
     else:
         st.warning("⚠️ 두 시퀀스를 모두 입력해주세요.")
 
-# 결과 표시
-if "mutations" in st.session_state and "length" in st.session_state:
+# 결과 출력
+if "mutations" in st.session_state:
     st.markdown("## 📋 Mutation Summary")
     for line in summarize(st.session_state["mutations"], st.session_state["length"]):
         st.text(line)
